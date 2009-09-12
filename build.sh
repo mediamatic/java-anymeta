@@ -4,8 +4,10 @@ mkdir -p build
 cd build
 
 CP="."
-for f in ../jar/*.jar; do
-    CP="$f:$CP";
+for f in ../library/*.jar; do
+    if [ "$f" != "../library/java_anymeta.jar" ]; then
+	CP="$f:$CP";
+    fi
 done
 
 FILES=`find ../src -name "*.java"`
