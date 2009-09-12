@@ -1,3 +1,8 @@
+/*
+ * Copyright 2009, Arjan Scherpenisse <arjan@scherpenisse.net>
+ * See LICENSE for details.
+ */
+
 package net.anymeta;
 
 import java.util.*;
@@ -14,15 +19,20 @@ public class Test {
 	public static void main(String[] arg) 
 		throws AnyMetaRegistryException, AnyMetaException, JSONException
 	{
+		
+		// Load the API
 		AnyMetaAPI api = AnyMetaAPI.fromRegistry("www.mediamatic.net");
+		
+		// Get information for the currently logged in user.
 		JSONObject o = api.doMethod("anymeta.user.info");
 		System.out.println("Logged in as " + o.getString("title"));
 
+		// Lookup an RFID tag.
 		HashMap<String, String> args = new HashMap();
-		args.put("field", "text.title");
-		args.put("id", "22661");
+		args.put("type", "rfid");
+		args.put("raw", "urn:rfid:DEADBEEF");
 		
-		o = api.doMethod("anymeta.predicates.get", args);
-		System.out.println(o.getString("result"));
+		o = api.doMethod("identity.identify", args);
+		System.out.println(o.toString());
 	}
 }

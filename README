@@ -1,0 +1,9 @@
+AnyMeta API for Java / Processing.
+
+Author: Arjan Scherpenisse <arjan@scherpenisse.net>
+
+
+External requirements:
+- Signpost OAuth library
+- Apache Commons Http Client v4.x
+- Ini4j

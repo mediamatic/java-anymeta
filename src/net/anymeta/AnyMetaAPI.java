@@ -1,22 +1,29 @@
+/*
+ * Copyright 2009, Arjan Scherpenisse <arjan@scherpenisse.net>
+ * See LICENSE for details.
+ */
+
 package net.anymeta;
 
 import java.io.IOException;
 import java.util.*;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.*;
 import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client*;
 import org.json.*;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.*;
-import oauth.signpost.exception.OAuthExpectationFailedException;
-import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.*;
 import oauth.signpost.signature.SignatureMethod;;
 
+/**
+ * Main API access class. Implements synchronous access to an AnyMeta site.
+ *  
+ * @author arjan
+ */
 public class AnyMetaAPI 
 {
 
@@ -26,6 +33,18 @@ public class AnyMetaAPI
 	private String tkey;
 	private String tsec;
 	
+	
+	/**
+	 * Create a AnyMetaAPI instance by specifying the entry point and 
+	 * OAuth credentials. It is often easier to use the "fromRegistry" 
+	 * method to separate your code and your OAuth secrets.
+	 * 
+	 * @param entrypoint
+	 * @param ckey
+	 * @param csec
+	 * @param tkey
+	 * @param tsec
+	 */
 	public AnyMetaAPI(String entrypoint, String ckey, String csec, String tkey, String tsec)
 	{
 		this.entrypoint = entrypoint;
@@ -35,6 +54,14 @@ public class AnyMetaAPI
 		this.tsec = tsec;
 	}
 	
+	
+	/**
+	 * Load a AnyMetaAPI object from the registry.
+	 * 
+	 * @param identifier	The registry identifier.
+	 * @return				A valid AnyMetaAPI object which can be used to access the site.
+	 * @throws AnyMetaRegistryException
+	 */
 	public static AnyMetaAPI fromRegistry(String identifier)
 		throws AnyMetaRegistryException
 	{
@@ -50,15 +77,32 @@ public class AnyMetaAPI
 		return new AnyMetaAPI(entrypoint, ckey, csec, tkey, tsec);
 	}
 	
+	
 	public String toString() {
 		return "<AnyMetaAPI: " + this.entrypoint + ">";
 	}
 
+	/**
+	 * Execute the given API call onto the anymeta instance.
+	 * 
+	 * @param method	The method.
+	 * @return			A JSONObject with the response.
+	 * @throws AnyMetaException
+	 */
 	public JSONObject doMethod(String method)
 		throws AnyMetaException {
 		return this.doMethod(method, new HashMap<String, String>()); 
 	}
 	
+	
+	/**
+	 * Execute the given API call onto the anymeta instance, with arguments.
+	 * 
+	 * @param method 	The method, e.g. "anymeta.user.info"
+	 * @param args		Arguments to give to the call.
+	 * @return			A JSONObject with the response.
+	 * @throws AnyMetaException	
+	 */
 	public JSONObject doMethod(String method, Map<String, String> args) 
 		throws AnyMetaException {
 		

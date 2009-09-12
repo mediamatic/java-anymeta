@@ -1,3 +1,8 @@
+/*
+ * Copyright 2009, Arjan Scherpenisse <arjan@scherpenisse.net>
+ * See LICENSE for details.
+ */
+
 package net.anymeta;
 
 public class AnyMetaException extends Exception 
