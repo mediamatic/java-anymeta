@@ -8,10 +8,9 @@ package net.anymeta;
 import java.io.IOException;
 import java.util.*;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.*;
 import org.apache.http.client.methods.*;
-import org.apache.http.impl.client*;
+import org.apache.http.impl.client.*;
 import org.json.*;
 
 import oauth.signpost.OAuthConsumer;
@@ -132,7 +131,7 @@ public class AnyMetaAPI
 			throw new AnyMetaException(e.getMessage());
 		}
 		
-		HttpClient client = new DefaultHttpClient();
+		DefaultHttpClient client = new DefaultHttpClient();
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		
 		String response = "";
