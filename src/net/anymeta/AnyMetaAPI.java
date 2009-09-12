@@ -98,11 +98,29 @@ public class AnyMetaAPI
 			throw new AnyMetaException(e.getMessage());
 		}
 		
+		if (response.equals("null"))
+		{
+			// empty response
+			return new JSONObject();
+		}
+		
+		// System.out.println(response);
+		
 		JSONObject o;
 		try {
 			o = new JSONObject(response);
 		} catch (JSONException e) {
 			throw new AnyMetaException(e.getMessage());
+		}
+		
+		if (o.has("err")) {
+			// handle error
+			try {
+				JSONObject err = o.getJSONObject("err").getJSONObject("-attrib-");
+				throw new AnyMetaException(err.getString("code") + ": " + err.getString("msg"));
+			} catch (JSONException e) {
+				throw new AnyMetaException("Unexpected response in API error");
+			}
 		}
 		
 		return o;

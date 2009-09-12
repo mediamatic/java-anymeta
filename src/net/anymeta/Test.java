@@ -12,7 +12,7 @@ public class Test {
 	 * @param args
 	 */
 	public static void main(String[] arg) 
-	throws AnyMetaRegistryException,AnyMetaException, JSONException
+		throws AnyMetaRegistryException, AnyMetaException, JSONException
 	{
 		AnyMetaAPI api = AnyMetaAPI.fromRegistry("www.mediamatic.net");
 		JSONObject o = api.doMethod("anymeta.user.info");
