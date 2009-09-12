@@ -9,8 +9,6 @@ import java.util.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import net.anymeta.*;
-
 public class Test {
 
 	/**
@@ -19,7 +17,6 @@ public class Test {
 	public static void main(String[] arg) 
 		throws AnyMetaRegistryException, AnyMetaException, JSONException
 	{
-		
 		// Load the API
 		AnyMetaAPI api = AnyMetaAPI.fromRegistry("www.mediamatic.net");
 		
