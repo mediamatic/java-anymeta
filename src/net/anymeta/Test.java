@@ -28,7 +28,7 @@ public class Test {
 		System.out.println("Logged in as " + o.getString("title"));
 
 		// Lookup an RFID tag.
-		HashMap<String, String> args = new HashMap();
+		HashMap<String, String> args = new HashMap<String, String>();
 		args.put("type", "rfid");
 		args.put("raw", "urn:rfid:DEADBEEF");
 		

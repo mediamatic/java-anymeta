@@ -43,8 +43,13 @@ public class AnyMetaRegistry
 		return "<AnyMetaRegistry instance>";
 	}
 	
-	public Map<String, String> get(String id) {
-		return ini.get(id);
+	public Map<String, String> get(String id) throws AnyMetaRegistryException {
+		Map<String, String> result = ini.get(id);
+		if (result == null)
+		{
+			throw new AnyMetaRegistryException("Registry entry not found: " + id);
+		}
+		return result;
 	}
 }
 
