@@ -1,5 +1,5 @@
 
-// An example which reads an RFID from a sonmicro reader, 
+// An example which reads an RFID from a sonmicro reader,
 // and retrieves the associated person. It then prints the person's name.
 
 import org.json.*;
@@ -25,11 +25,11 @@ class TagListener implements RFIDListener
         HashMap args = new HashMap();
         args.put("type", "rfid");
         args.put("raw", "urn:rfid:" + e.getTag().toString().replaceAll(":", ""));
-        
+
         try {
           // Do the call
-          JSONObject person = api.doMethod("identity.identify", args);
-          
+			JSONObject person = (JSONObject)api.doMethod("identity.identify", args);
+
           // We got a response!
 
           if (person == null) {
@@ -37,7 +37,7 @@ class TagListener implements RFIDListener
           } else {
             println("Connected person: " + person.getString("title"));
           }
-          
+
         } catch (JSONException ex) {
           println(ex);
         } catch (AnyMetaException ex) {
@@ -54,14 +54,14 @@ class TagListener implements RFIDListener
 void setup()
 {
    // Setup anymeta connection
-   
+
    try {
      api = AnyMetaAPI.fromRegistry("www.mediamatic.net");
    } catch (AnyMetaRegistryException e) {
      // The specified API key was not found
      println("Anymeta registry exception: " + e.getMessage());
    }
-   
+
    // Setup RFID reader.
    String portName = "/dev/ttyUSB0";
     try {
@@ -71,5 +71,5 @@ void setup()
     } catch (PortInUseException e) {
 	println("Port "+portName+" is in use by another program.");
     }
-   
+
 }

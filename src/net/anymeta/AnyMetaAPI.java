@@ -140,6 +140,11 @@ public class AnyMetaAPI
 		} catch (IOException e) {
 			throw new AnyMetaException(e.getMessage());
 		}
+		
+		if (response.equalsIgnoreCase("null") || response.equalsIgnoreCase("false"))
+		{
+			return null;
+		}
 
 		if (!response.startsWith("[") && !response.startsWith("{"))
 		{
