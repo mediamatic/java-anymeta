@@ -88,7 +88,7 @@ public class AnyMetaAPI
 	 * @return			A JSONObject with the response.
 	 * @throws AnyMetaException
 	 */
-	public JSONObject doMethod(String method)
+	public Object doMethod(String method)
 		throws AnyMetaException {
 		return this.doMethod(method, new HashMap<String, String>());
 	}
@@ -99,10 +99,10 @@ public class AnyMetaAPI
 	 *
 	 * @param method 	The method, e.g. "anymeta.user.info"
 	 * @param args		Arguments to give to the call.
-	 * @return			A JSONObject with the response.
+	 * @return			A JSONObject or JSONArray with the response.
 	 * @throws AnyMetaException
 	 */
-	public JSONObject doMethod(String method, Map<String, String> args)
+	public Object doMethod(String method, Map<String, String> args)
 		throws AnyMetaException {
 
 		String params = "";
@@ -141,28 +141,31 @@ public class AnyMetaAPI
 			throw new AnyMetaException(e.getMessage());
 		}
 
-		if (response.equals("null") || response.equals("false") || response.equals("true"))
+		if (!response.startsWith("[") && !response.startsWith("{"))
 		{
-			// empty response
-			return null;
+			response = "{\"result\": " + response + "}";
 		}
 
 		// System.out.println(response);
 
-		JSONObject o;
+		Object o;
 		try {
 			o = new JSONObject(response);
 		} catch (JSONException e) {
-			throw new AnyMetaException(e.getMessage() + ": response=" + response);
+			try {
+				o = new JSONArray(response);
+			} catch (JSONException e2) {
+				throw new AnyMetaException(e.getMessage() + ": response=" + response);
+			}
 		}
 
-		if (o.has("err")) {
+		if (o instanceof JSONObject && ((JSONObject)o).has("err")) {
 			// handle error
 			try {
-				JSONObject err = o.getJSONObject("err").getJSONObject("-attrib-");
+				JSONObject err = ((JSONObject)o).getJSONObject("err").getJSONObject("-attrib-");
 				throw new AnyMetaException(err.getString("code") + ": " + err.getString("msg"));
 			} catch (JSONException e) {
-				throw new AnyMetaException("Unexpected response in API error");
+				throw new AnyMetaException("Unexpected response in API error: response=" + response);
 			}
 		}
 
