@@ -14,6 +14,12 @@ import java.util.*;
  * The AnyMeta registry is a file in your home directory called ".anymeta". 
  * It contains, in .ini format, OAuth credentials to access AnyMeta sites.
  * This class assists you in loading the information from that file.
+ * <p>
+ * Note: this class does *not* support creating these files! Use the
+ * excellent AnyMetaAPI python package ("<tt>sudo easy_install
+ * AnyMetaAPI</tt>") to edit this registry. 
+ * <p>
+ * For more info, <a href="http://trac.mediamatic.nl/python-anymeta/wiki/GettingStarted">click here</a>.
  * 
  * @author arjan
  */

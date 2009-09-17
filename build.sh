@@ -12,9 +12,17 @@ done
 
 FILES=`find ../src -name "*.java"`
 
+echo
+echo "Creating docs..."
+mkdir -p ../doc
+javadoc -d ../doc $FILES
+
+echo
+echo "Compiling..."
 javac -d . -cp $CP $FILES
 jar -cf java_anymeta.jar org net
 cp java_anymeta.jar ../library
+
 echo
 echo "Build done; .jar file put in library/"
 
@@ -23,7 +31,3 @@ if [ "`which hg`" != "" ]; then
   hg archive -t zip -p java_anymeta $F
   echo "Created $F."
 fi
-
-echo "Creating docs.."
-mkdir -p ../doc
-javadoc -d ../doc $FILES
