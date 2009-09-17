@@ -50,7 +50,6 @@ class TagListener implements RFIDListener
 }
 
 
-
 void setup()
 {
    // Setup anymeta connection
@@ -71,5 +70,4 @@ void setup()
     } catch (PortInUseException e) {
 	println("Port "+portName+" is in use by another program.");
     }
-
 }

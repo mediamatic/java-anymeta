@@ -24,3 +24,6 @@ if [ "`which hg`" != "" ]; then
   echo "Created $F."
 fi
 
+echo "Creating docs.."
+mkdir -p ../doc
+javadoc -d ../doc $FILES
