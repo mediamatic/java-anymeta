@@ -23,12 +23,23 @@ public class Test {
 		JSONObject o = (JSONObject)api.doMethod("anymeta.user.info");
 		System.out.println("Logged in as " + o.getString("title"));
 
-		// Lookup an RFID tag.
-		HashMap args = new HashMap();
-		args.put("mime", "image/jpeg");
-		args.put("data", "@/home/arjan/poster.jpg");
+		//  
+		HashMap<String, Object> args2 = new HashMap<String, Object>();
+		args2.put("q_kind", "PERSON");
 		
-		o = (JSONObject)api.doMethod("anymeta.attachment.create", args);
+		JSONArray a = (JSONArray)api.doMethod("query.execute", args2);
+		System.out.println(a.toString());
+		System.out.println(a.length());
+
+		// Lookup an RFID tag.
+		HashMap<String, Object> args = new HashMap<String, Object>();
+		ArrayList<String> ids = new ArrayList<String>();
+		ids.add("65");
+		ids.add("94");
+		args.put("ids", ids);
+		args.put("predicate", "KNOWS");
+		
+		o = (JSONObject)api.doMethod("contact.link", args);
 		System.out.println(o.toString());
 		
 	}

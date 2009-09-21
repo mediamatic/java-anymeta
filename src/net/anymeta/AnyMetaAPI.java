@@ -98,7 +98,7 @@ public class AnyMetaAPI
 	 */
 	public Object doMethod(String method)
 		throws AnyMetaException {
-		return this.doMethod(method, new HashMap<String, String>());
+		return this.doMethod(method, new HashMap<String, Object>());
 	}
 
 
@@ -110,7 +110,7 @@ public class AnyMetaAPI
 	 * @return			A JSONObject or JSONArray with the response.
 	 * @throws AnyMetaException
 	 */
-	public Object doMethod(String method, Map<String, String> args)
+	public Object doMethod(String method, Map<String, Object> args)
 		throws AnyMetaException {
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -118,28 +118,35 @@ public class AnyMetaAPI
 		params.add(new BasicNameValuePair("method", method));
 		params.add(new BasicNameValuePair("format", "json"));
 
-		for (Iterator<String> it=args.keySet().iterator(); it.hasNext();) {
-			String k = it.next();
-			String value;
-			if (args.get(k).charAt(0) == '@') {
-				// try to do some file-magic
-				try {
-					File f = new File(args.get(k).substring(1));
-					if (f.exists() && f.canRead()) {
-						byte[] buf = new byte[(int)f.length()];
-						FileInputStream fis = new FileInputStream(f);
-						fis.read(buf);
-						value = new String(Base64.encodeBase64(buf));
-					} else {
-						value = args.get(k);
+		for (String k : args.keySet())
+		{
+			if (args.get(k) instanceof String) {
+				String key = (String)args.get(k);
+				String value;
+				if (key.charAt(0) == '@') {
+					// try to do some file-magic
+					try {
+						File f = new File(key.substring(1));
+						if (f.exists() && f.canRead()) {
+							byte[] buf = new byte[(int)f.length()];
+							FileInputStream fis = new FileInputStream(f);
+							fis.read(buf);
+							value = new String(Base64.encodeBase64(buf));
+						} else {
+							value = key;
+						}
+					} catch (IOException e) {
+						throw new AnyMetaException(e.getMessage());
 					}
-				} catch (IOException e) {
-					throw new AnyMetaException(e.getMessage());
+				} else {
+					value = key;
 				}
-			} else {
-				value = args.get(k);
+				params.add(new BasicNameValuePair(k,value));
+			} else if (args.get(k) instanceof List) {
+				for (String v : ((List<String>)args.get(k))) {
+					params.add(new BasicNameValuePair(k+"[]",v));
+				}
 			}
-			params.add(new BasicNameValuePair(k,value));
 		}
 
 		String url = this.entrypoint;
