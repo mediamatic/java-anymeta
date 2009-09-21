@@ -5,12 +5,21 @@
 
 package net.anymeta;
 
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.*;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.*;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.*;
 
 import oauth.signpost.OAuthConsumer;
@@ -25,7 +34,6 @@ import oauth.signpost.signature.SignatureMethod;;
  */
 public class AnyMetaAPI
 {
-
 	public String entrypoint;
 	private String ckey;
 	private String csec;
@@ -105,24 +113,50 @@ public class AnyMetaAPI
 	public Object doMethod(String method, Map<String, String> args)
 		throws AnyMetaException {
 
-		String params = "";
-
-		args.put("method", method);
-		args.put("format", "json");
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		
+		params.add(new BasicNameValuePair("method", method));
+		params.add(new BasicNameValuePair("format", "json"));
 
 		for (Iterator<String> it=args.keySet().iterator(); it.hasNext();) {
 			String k = it.next();
-			params += k + "=" + args.get(k);
-			if (it.hasNext()) params += "&";
+			String value;
+			if (args.get(k).charAt(0) == '@') {
+				// try to do some file-magic
+				try {
+					File f = new File(args.get(k).substring(1));
+					if (f.exists() && f.canRead()) {
+						byte[] buf = new byte[(int)f.length()];
+						FileInputStream fis = new FileInputStream(f);
+						fis.read(buf);
+						value = new String(Base64.encodeBase64(buf));
+					} else {
+						value = args.get(k);
+					}
+				} catch (IOException e) {
+					throw new AnyMetaException(e.getMessage());
+				}
+			} else {
+				value = args.get(k);
+			}
+			params.add(new BasicNameValuePair(k,value));
 		}
 
-		String url = this.entrypoint + "?" + params;
+		String url = this.entrypoint;
 
 		OAuthConsumer consumer = new CommonsHttpOAuthConsumer(this.ckey, this.csec, SignatureMethod.PLAINTEXT);
 		consumer.setTokenWithSecret(this.tkey, this.tsec);
 
 		HttpPost request = new HttpPost(url);
 
+		// set up httppost
+		try {
+			UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, "UTF-8");
+			request.setEntity(entity);
+		} catch (UnsupportedEncodingException e) {
+			throw new AnyMetaException(e.getMessage());
+		}
+		
 		try {
 			consumer.sign(request);
 		} catch (OAuthMessageSignerException e) {

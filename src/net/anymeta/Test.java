@@ -24,22 +24,12 @@ public class Test {
 		System.out.println("Logged in as " + o.getString("title"));
 
 		// Lookup an RFID tag.
-		HashMap<String, String> args = new HashMap<String, String>();
-		args.put("type", "rfid");
-		args.put("raw", "urn:rfid:DEADBEEFxx");
+		HashMap args = new HashMap();
+		args.put("mime", "image/jpeg");
+		args.put("data", "@/home/arjan/poster.jpg");
 		
-		o = (JSONObject)api.doMethod("identity.identify", args);
+		o = (JSONObject)api.doMethod("anymeta.attachment.create", args);
 		System.out.println(o.toString());
-
-		// Get the 10 newest uploaded files.
-		args.clear();
-		args.put("q_kind", "ATTACHMENT");
-		args.put("q_sort", "-create_date");
-		args.put("paglen", "10");
-		
-		JSONArray a = (JSONArray)api.doMethod("query.execute", args);
-		System.out.println(a.toString());
-
 		
 	}
 }
