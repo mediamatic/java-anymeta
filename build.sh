@@ -10,12 +10,14 @@ for f in ../library/*.jar; do
     fi
 done
 
+echo $CP
+
 FILES=`find ../src -name "*.java"`
 
 echo
 echo "Creating docs..."
 mkdir -p ../doc
-javadoc -d ../doc $FILES
+javadoc -classpath $CP -d ../doc $FILES
 
 echo
 echo "Compiling..."

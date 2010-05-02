@@ -20,6 +20,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.*;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreProtocolPNames;
 import org.json.*;
 
 import oauth.signpost.OAuthConsumer;
@@ -155,6 +156,7 @@ public class AnyMetaAPI
 		consumer.setTokenWithSecret(this.tkey, this.tsec);
 
 		HttpPost request = new HttpPost(url);
+        request.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 
 		// set up httppost
 		try {
