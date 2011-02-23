@@ -16,6 +16,8 @@ public class Test {
 	public static void main(String[] arg) 
 		throws AnyMetaRegistryException, AnyMetaException, JSONException
 	{
+        HashMap<String, Object> args;
+
 		// Load the API
 		AnyMetaAPI api = AnyMetaAPI.fromRegistry("pluto.local");
 		
@@ -24,15 +26,15 @@ public class Test {
 		System.out.println("Logged in as " + o.getString("title"));
 
 		//  
-		HashMap<String, Object> args2 = new HashMap<String, Object>();
-		args2.put("q_kind", "PERSON");
+		args = new HashMap<String, Object>();
+		args.put("q_kind", "PERSON");
 		
-		JSONArray a = (JSONArray)api.doMethod("query.execute", args2);
+		JSONArray a = (JSONArray)api.doMethod("query.execute", args);
 		System.out.println(a.toString());
 		System.out.println(a.length());
 
 		// Lookup an RFID tag.
-		HashMap<String, Object> args = new HashMap<String, Object>();
+		args = new HashMap<String, Object>();
 		ArrayList<String> ids = new ArrayList<String>();
 		ids.add("65");
 		ids.add("94");
@@ -43,7 +45,7 @@ public class Test {
 		System.out.println(o.toString());
 
 		// Upload an image
-		HashMap<String, Object> args = new HashMap<String, Object>();
+		args = new HashMap<String, Object>();
 		args.put("mime", "image/jpeg");
 		args.put("data", "@C:\\bla.jpg");
 		

@@ -115,40 +115,11 @@ public class AnyMetaAPI
 		throws AnyMetaException {
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		
+
 		params.add(new BasicNameValuePair("method", method));
 		params.add(new BasicNameValuePair("format", "json"));
 
-		for (String k : args.keySet())
-		{
-			if (args.get(k) instanceof String) {
-				String key = (String)args.get(k);
-				String value;
-				if (key.charAt(0) == '@') {
-					// try to do some file-magic
-					try {
-						File f = new File(key.substring(1));
-						if (f.exists() && f.canRead()) {
-							byte[] buf = new byte[(int)f.length()];
-							FileInputStream fis = new FileInputStream(f);
-							fis.read(buf);
-							value = new String(Base64.encodeBase64(buf));
-						} else {
-							value = key;
-						}
-					} catch (IOException e) {
-						throw new AnyMetaException(e.getMessage());
-					}
-				} else {
-					value = key;
-				}
-				params.add(new BasicNameValuePair(k,value));
-			} else if (args.get(k) instanceof List) {
-				for (String v : ((List<String>)args.get(k))) {
-					params.add(new BasicNameValuePair(k+"[]",v));
-				}
-			}
-		}
+        convertParameters((Object)args, params, null);
 
 		String url = this.entrypoint;
 
@@ -219,4 +190,62 @@ public class AnyMetaAPI
 
 		return o;
 	}
+
+
+    /**
+     * Recursively descend the args structure to convert each to
+     * form-encoded params.
+     */
+    private void convertParameters(Object arg, List<NameValuePair> params, String prefix) throws AnyMetaException
+    {
+        if (arg instanceof String)
+        {
+            String value = (String)arg;
+            if (value.charAt(0) == '@') {
+                // try to do some file-magic
+                try {
+                    File f = new File(value.substring(1));
+                    if (f.exists() && f.canRead()) {
+                        byte[] buf = new byte[(int)f.length()];
+                        FileInputStream fis = new FileInputStream(f);
+                        fis.read(buf);
+                        value = new String(Base64.encodeBase64(buf));
+                    }
+                } catch (IOException e) {
+                    throw new AnyMetaException(e.getMessage());
+                }
+            }
+            params.add(new BasicNameValuePair(prefix,value));
+        }
+
+        else if (arg instanceof Map)
+        {
+            Map<String,Object> m = (Map<String,Object>)arg;
+            for (String k : m.keySet())
+            {
+				Object value = ((Map<String,Object>)arg).get(k);
+                convertParameters(value, params, (prefix!=null) ? prefix+"["+k+"]" : k);
+            }
+        }
+
+        else if (arg instanceof List)
+        {
+            if (prefix==null)
+            {
+                throw new AnyMetaException("Cannot use list as first level of API arguments");
+            }
+            for (int i=0; i<((List)arg).size(); i++)
+            {
+                Object value = ((List)arg).get(i);
+                convertParameters(value, params, prefix+"["+i+"]");
+            }
+        }
+
+        else
+        {
+            throw new AnyMetaException("Unsupported argument type");
+        }
+
+    }
+
 }
