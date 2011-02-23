@@ -41,6 +41,14 @@ public class Test {
 		
 		o = (JSONObject)api.doMethod("contact.link", args);
 		System.out.println(o.toString());
+
+		// Upload an image
+		HashMap<String, Object> args = new HashMap<String, Object>();
+		args.put("mime", "image/jpeg");
+		args.put("data", "@C:\\bla.jpg");
+		
+		o = (JSONObject)api.doMethod("anymeta.attachment.create", args);
+		System.out.println(o.toString());
 		
 	}
 }
